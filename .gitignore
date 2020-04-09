@@ -2,6 +2,7 @@
 *.zip
 *.json
 *.pkl
-.Rproj.user
-.RData
-.Rhistory
+*.Rproj.user
+*.RData
+*.Rhistory
+*.Rproj
