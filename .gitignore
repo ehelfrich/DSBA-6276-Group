@@ -1,3 +1,7 @@
-*.csv 
+*.csv
 *.zip
 *.json
+*.pkl
+.Rproj.user
+.RData
+.Rhistory
