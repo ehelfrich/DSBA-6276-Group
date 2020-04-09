@@ -3,7 +3,7 @@ import numpy as np
 from collections import defaultdict, Counter
 
 from nltk.corpus import stopwords
-from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS
+# from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS
 
 import string
 import pickle
@@ -32,7 +32,10 @@ good_reviews = good_reviews.dropna()  # Drop NA's
 good_grouped = good_reviews.groupby(['id'])
 
 # Preprocessing Function
-STOPWORDS = set(stopwords.words('english') + list(ENGLISH_STOP_WORDS))
+spacy_stopwords = spacy.lang.en.stop_words.STOP_WORDS #import the spacy stop words library
+customize_stop_words = ['chrome','safari','ios', 'apple','app',' ','..','google','tabs','open','closed','browser','use'] # set of custom stop words
+
+STOPWORDS = set(stopwords.words('english') + list(spacy_stopwords) + list(customize_stop_words))
 SYMBOLS = " ".join(string.punctuation).split(" ") + ["-", "...", "”", "”"]
 ESCAPE_CHAR = ['\n', '\n\n']
 # TODO: Capture emojis and proper nouns
@@ -45,7 +48,7 @@ def preprocess_tokens(token):
     except UnicodeDecodeError:
         return False
     # Stopwords/Symbols/\n
-    if token.text in STOPWORDS:
+    if token.text in STOPWORDS or token.text.lower() in STOPWORDS or token.text.upper() in STOPWORDS:
         return False
     elif token.text in SYMBOLS:
         return False
