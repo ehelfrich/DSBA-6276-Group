@@ -37,7 +37,7 @@ good_grouped = good_reviews.groupby(['id'])
 
 # Preprocessing Function
 spacy_stopwords = spacy.lang.en.stop_words.STOP_WORDS #import the spacy stop words library
-customize_stop_words = ['chrome','safari','ios', 'apple','app',' ','..','google','tabs','open','closed','browser','use'] # set of custom stop words
+customize_stop_words = ['chrome','safari','ios','app',' ','..','google','tabs','open','closed','browser','use'] # set of custom stop words
 
 STOPWORDS = set(stopwords.words('english') + list(spacy_stopwords) + list(customize_stop_words))
 SYMBOLS = " ".join(string.punctuation).split(" ") + ["-", "...", "”", "”"]
@@ -48,7 +48,7 @@ ESCAPE_CHAR = ['\n', '\n\n']
 
 
 def preprocess_tokens(token):
-    print("token TEST: " + token.text + " || "+ str(token.pos_), file=log_file) # since we've disabled the tagger from the pipe POS call wont work
+    print("token TEST: " + token.text + " || "+ str(token.pos_), file=log_file)
     # Check latin character
     try:
         token.text.encode(encoding='utf-8').decode('ascii')
@@ -88,7 +88,7 @@ for name, group in bad_grouped:
     print(*texts, sep=", " , file=log_file)
     words = []
     bad_nlp_dict[name] = words
-    pipe = nlp.pipe(texts, disable=['tagger', 'parser'])
+    pipe = nlp.pipe(texts, disable=['parser'])
     for doc in pipe:
         print("doc TEST: " + doc.text , file=log_file)
         words.extend([token.text for token in doc if preprocess_tokens(token) is True])
@@ -99,7 +99,7 @@ for name, group in good_grouped:
     texts = group['review'].to_numpy().tolist()
     words = []
     good_nlp_dict[name] = words
-    pipe = nlp.pipe(texts, disable=['tagger', 'parser'])
+    pipe = nlp.pipe(texts, disable=['parser'])
     for doc in pipe:
         words.extend([token.text for token in doc if preprocess_tokens(token) is True])
 
