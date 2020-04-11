@@ -9,11 +9,15 @@ import string
 import pickle
 
 import spacy
+#from spacymoji import Emoji
 
 # Read in reviews
 reviews = pd.read_csv('./data/reviews_final.csv')
 
 nlp = spacy.load('en_core_web_lg')
+
+#log file path
+log_file = open("./data/log_output.txt", "a")
 
 # Group Reviews
 # bad_test = reviews[(reviews['rating'] <= 2) & (reviews['id'] == 281796108)]
@@ -38,22 +42,38 @@ customize_stop_words = ['chrome','safari','ios', 'apple','app',' ','..','google'
 STOPWORDS = set(stopwords.words('english') + list(spacy_stopwords) + list(customize_stop_words))
 SYMBOLS = " ".join(string.punctuation).split(" ") + ["-", "...", "”", "”"]
 ESCAPE_CHAR = ['\n', '\n\n']
-# TODO: Capture emojis and proper nouns
+
+#emoji_handler = Emoji(nlp) #calling the emoji function from spacy and adding the nlp object
+#nlp.add_pipe(emoji_handler, first=True)
 
 
 def preprocess_tokens(token):
+    print("token TEST: " + token.text + " || "+ str(token.pos_), file=log_file) # since we've disabled the tagger from the pipe POS call wont work
     # Check latin character
     try:
         token.text.encode(encoding='utf-8').decode('ascii')
     except UnicodeDecodeError:
+        print("UnicodeDecodeError token TEST: " + token.text , file=log_file)
         return False
     # Stopwords/Symbols/\n
     if token.text in STOPWORDS or token.text.lower() in STOPWORDS or token.text.upper() in STOPWORDS:
+        print("STOPWORDS token TEST: " + token.text, file=log_file)
         return False
     elif token.text in SYMBOLS:
+        print("SYMBOLS token TEST: " + token.text , file=log_file)
         return False
     elif token.text in ESCAPE_CHAR:
+        print("ESCAPE_CHAR token TEST: " + token.text , file=log_file)
         return False
+    elif token.like_num:
+        print("NUMBER CHECK token TEST: " + token.text + " || " + str(token.like_num) , file=log_file)
+        return False
+    elif token.pos_ == 'PROPN':
+        print("PROPER NOUN CHECK token TEST: " + token.text + " || " + str(token.pos_) , file=log_file)
+        return False
+    #elif token._.is_emoji:
+    #    print("Emoji token TEST: " + token.text)
+    #    return False
     else:
         return True
 
@@ -62,11 +82,15 @@ def preprocess_tokens(token):
 # Bad Tokens
 bad_nlp_dict = {}
 for name, group in bad_grouped:
+    print("App_ID : " + str(name) , file=log_file)
     texts = group['review'].to_numpy().tolist()
+    print("*** texts *** " , file=log_file)
+    print(*texts, sep=", " , file=log_file)
     words = []
     bad_nlp_dict[name] = words
     pipe = nlp.pipe(texts, disable=['tagger', 'parser'])
     for doc in pipe:
+        print("doc TEST: " + doc.text , file=log_file)
         words.extend([token.text for token in doc if preprocess_tokens(token) is True])
 
 # Good Tokens
