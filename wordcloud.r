@@ -61,3 +61,13 @@ bad_tokens %>%
       colors=brewer.pal(8,"Dark2")
     )
   )
+
+# Bad Token Histogram
+bad_tokens %>%
+  count(token_words, sort = TRUE) %>%
+  filter(n>10000) %>%
+  ggplot(aes(x = reorder(token_words, n), y = n)) +
+  geom_col() +
+  coord_flip() + 
+  labs(x='', y='') +
+  theme_classic()

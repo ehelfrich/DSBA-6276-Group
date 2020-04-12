@@ -37,7 +37,7 @@ good_grouped = good_reviews.groupby(['id'])
 
 # Preprocessing Function
 spacy_stopwords = spacy.lang.en.stop_words.STOP_WORDS #import the spacy stop words library
-customize_stop_words = ['chrome','safari','ios','app',' ','..','google','tabs','open','closed','browser','use'] # set of custom stop words
+customize_stop_words = ['chrome', 'safari', 'ios', 'app', ' ', '..', 'google', 'tabs', 'open', 'closed', 'browser', 'use', 'game']  # set of custom stop words
 
 STOPWORDS = set(stopwords.words('english') + list(spacy_stopwords) + list(customize_stop_words))
 SYMBOLS = " ".join(string.punctuation).split(" ") + ["-", "...", "”", "”"]
